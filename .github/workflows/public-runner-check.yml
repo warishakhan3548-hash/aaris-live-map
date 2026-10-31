@@ -1,0 +1,29 @@
+name: Free public runner hardware check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-public-runner:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Show free Linux VM capabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== RUNNER ==="
+          uname -a
+          echo "=== CPU ==="
+          nproc
+          echo "=== RAM ==="
+          free -h
+          echo "=== DISK ==="
+          df -h /
+          echo "=== PUBLIC RUNNER REPORT ===" >> "$GITHUB_STEP_SUMMARY"
+          echo '~~~text' >> "$GITHUB_STEP_SUMMARY"
+          { printf 'CPU cores: '; nproc; free -h; df -h /; } >> "$GITHUB_STEP_SUMMARY"
+          echo '~~~' >> "$GITHUB_STEP_SUMMARY"
